@@ -1,12 +1,12 @@
-# Twitter AI Gig Hunter Agent
+# Twitter AI Gig Hunter & Lead Intelligence Agent
 
 ## What This Is
 
-An autonomous AI agent that runs on ZeroClaw's Rust-based agent runtime, searches Twitter/X for AI engineering gig postings via Twikit (cookie-based, no API key), scores relevance with MiniMax M2.5, drafts contextual replies, and posts on your behalf — all from a single ~16MB binary on a $5 VPS.
+An autonomous AI agent that runs on ZeroClaw's Rust-based agent runtime, continuously scans Twitter/X for AI/ML opportunities — freelance gigs, remote jobs, consulting leads, and automation prospects — via Twikit (cookie-based, no API key), scores and categorizes them with MiniMax M2.5, delivers daily intelligence reports, and optionally auto-replies to high-value gig posts. All from a single ~16MB binary on a $5 VPS.
 
 ## Core Value
 
-The agent must reliably find real AI/ML gig opportunities on Twitter, score them accurately, and generate human-sounding replies that get responses — without getting the user's personal Twitter account flagged or suspended.
+The agent must continuously surface actionable AI/ML opportunities from Twitter across all categories (freelance, jobs, consulting, automation), deliver categorized daily digests so the user can act on the best leads, and optionally engage with high-value posts — without getting the personal account suspended.
 
 ## Requirements
 
