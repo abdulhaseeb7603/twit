@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-00-PLAN.md
-last_updated: "2026-03-24T19:54:04.056Z"
+stopped_at: Completed 01-01-PLAN.md
+last_updated: "2026-03-24T20:00:31.767Z"
 last_activity: 2026-03-24 -- Completed 01-00 test scaffold plan
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 25
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-20)
 ## Current Position
 
 Phase: 1 of 6 (Foundation & Infrastructure)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: Executing
-Last activity: 2026-03-24 -- Completed 01-00 test scaffold plan
+Last activity: 2026-03-25 -- Completed 01-01 ZeroClaw config + SKILL.toml
 
-Progress: [███░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ Progress: [███░░░░░░░] 25%
 
 *Updated after each plan completion*
 | Phase 01 P00 | 3min | 2 tasks | 7 files |
+| Phase 01 P01 | 3min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,7 @@ Recent decisions affecting current work:
 - [Roadmap]: VPS deployment verification stays in Phase 1 to catch ZeroClaw bug #851 early
 - [Roadmap]: MEMO-01 moved to Phase 1 (memory schema needed from the start), MEMO-04 to Phase 3 (report queries)
 - [Phase 01]: Tests import common.py via scripts_dir fixture injecting ZeroClaw skill path into sys.path
+- [Phase 01]: Config files stored both in ~/.zeroclaw/ (runtime) and repo config/ dir (version control)
 
 ### Pending Todos
 
@@ -78,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T19:54:04.053Z
-Stopped at: Completed 01-00-PLAN.md
+Last session: 2026-03-24T20:00:31.764Z
+Stopped at: Completed 01-01-PLAN.md
 Resume file: None

@@ -61,12 +61,12 @@
 
 ### Infrastructure
 
-- [ ] **INFR-01**: ZeroClaw skill defined in SKILL.toml with all tools (search, score, reply_gen, post, report_gen)
+- [x] **INFR-01**: ZeroClaw skill defined in SKILL.toml with all tools (search, score, reply_gen, post, report_gen)
 - [x] **INFR-02**: Python bridge scripts handle Twikit and MiniMax API calls independently of ZeroClaw's provider
-- [ ] **INFR-03**: ZeroClaw config includes MiniMax provider, model routing (fast/reasoning), and cost limits
+- [x] **INFR-03**: ZeroClaw config includes MiniMax provider, model routing (fast/reasoning), and cost limits
 - [x] **INFR-04**: All actions logged with structured error handling -- failures surface clearly
 - [x] **INFR-05**: Agent detects Twikit failures (Cloudflare blocks, cookie expiry) and logs/alerts instead of silently dying
-- [ ] **INFR-06**: Cost tracking enforces $5/day and $50/month spend limits
+- [x] **INFR-06**: Cost tracking enforces $5/day and $50/month spend limits
 - [ ] **INFR-07**: Agent deploys to Linux VPS as systemd service via ZeroClaw
 
 ### Memory & State
@@ -145,12 +145,12 @@
 | STYL-01 | Phase 6 | Pending |
 | STYL-02 | Phase 6 | Pending |
 | STYL-03 | Phase 4 | Pending |
-| INFR-01 | Phase 1 | Pending |
+| INFR-01 | Phase 1 | Complete |
 | INFR-02 | Phase 1 | Complete |
-| INFR-03 | Phase 1 | Pending |
+| INFR-03 | Phase 1 | Complete |
 | INFR-04 | Phase 1 | Complete |
 | INFR-05 | Phase 1 | Complete |
-| INFR-06 | Phase 1 | Pending |
+| INFR-06 | Phase 1 | Complete |
 | INFR-07 | Phase 1 | Pending |
 | MEMO-01 | Phase 1 | Complete |
 | MEMO-02 | Phase 5 | Pending |
