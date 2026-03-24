@@ -31,12 +31,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. ZeroClaw config routes LLM calls to MiniMax (fast tier and reasoning tier) with cost limits ($5/day, $50/month) enforced
   4. All scored tweets persist in SQLite with scores, categories, and metadata queryable for later reporting
   5. The agent runs on the Linux VPS as a systemd service and surfaces Twikit failures (Cloudflare blocks, cookie expiry) in structured error logs rather than dying silently
-**Plans:** 3 plans
+**Plans:** 4 plans
 
 Plans:
+- [ ] 01-00-PLAN.md — Wave 0 pytest scaffold: pyproject.toml, conftest.py, and 4 test modules defining behavioral contracts
 - [ ] 01-01-PLAN.md — ZeroClaw config.toml and SKILL.toml with MiniMax provider, model routing, cost limits, and 5 tool registrations
 - [ ] 01-02-PLAN.md — Python bridge layer: common.py, rate_limiter.py, init_db.py (memory schema), and all 5 bridge scripts
-- [ ] 01-03-PLAN.md — Integration verification: smoke tests, deployment script, systemd service, and human sign-off
+- [ ] 01-03-PLAN.md — Integration verification: smoke tests, deployment script with secrets loading, systemd service, and human sign-off
 
 ### Phase 2: Search & Scoring Pipeline
 **Goal**: The agent finds AI/ML opportunity tweets across all categories, scores and categorizes them, and stores results -- the core intelligence loop
@@ -116,7 +117,7 @@ Note: Phases 3 and 4 both depend on Phase 2 and could theoretically execute in p
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Infrastructure | 0/3 | Planning complete | - |
+| 1. Foundation & Infrastructure | 0/4 | Planning complete | - |
 | 2. Search & Scoring Pipeline | 0/2 | Not started | - |
 | 3. Lead Intelligence & Reporting | 0/2 | Not started | - |
 | 4. Reply Engine | 0/1 | Not started | - |
