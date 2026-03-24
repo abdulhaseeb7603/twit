@@ -62,16 +62,16 @@
 ### Infrastructure
 
 - [ ] **INFR-01**: ZeroClaw skill defined in SKILL.toml with all tools (search, score, reply_gen, post, report_gen)
-- [ ] **INFR-02**: Python bridge scripts handle Twikit and MiniMax API calls independently of ZeroClaw's provider
+- [x] **INFR-02**: Python bridge scripts handle Twikit and MiniMax API calls independently of ZeroClaw's provider
 - [ ] **INFR-03**: ZeroClaw config includes MiniMax provider, model routing (fast/reasoning), and cost limits
-- [ ] **INFR-04**: All actions logged with structured error handling -- failures surface clearly
-- [ ] **INFR-05**: Agent detects Twikit failures (Cloudflare blocks, cookie expiry) and logs/alerts instead of silently dying
+- [x] **INFR-04**: All actions logged with structured error handling -- failures surface clearly
+- [x] **INFR-05**: Agent detects Twikit failures (Cloudflare blocks, cookie expiry) and logs/alerts instead of silently dying
 - [ ] **INFR-06**: Cost tracking enforces $5/day and $50/month spend limits
 - [ ] **INFR-07**: Agent deploys to Linux VPS as systemd service via ZeroClaw
 
 ### Memory & State
 
-- [ ] **MEMO-01**: Agent stores all scored tweets in memory (SQLite + vector) with scores, categories, and metadata
+- [x] **MEMO-01**: Agent stores all scored tweets in memory (SQLite + vector) with scores, categories, and metadata
 - [ ] **MEMO-02**: Agent stores all sent replies in memory with timestamps for cooldown/reporting
 - [ ] **MEMO-03**: Agent checks memory before replying to enforce dedup and interaction history
 - [ ] **MEMO-04**: Memory supports queries for daily digest and weekly report generation
@@ -146,13 +146,13 @@
 | STYL-02 | Phase 6 | Pending |
 | STYL-03 | Phase 4 | Pending |
 | INFR-01 | Phase 1 | Pending |
-| INFR-02 | Phase 1 | Pending |
+| INFR-02 | Phase 1 | Complete |
 | INFR-03 | Phase 1 | Pending |
-| INFR-04 | Phase 1 | Pending |
-| INFR-05 | Phase 1 | Pending |
+| INFR-04 | Phase 1 | Complete |
+| INFR-05 | Phase 1 | Complete |
 | INFR-06 | Phase 1 | Pending |
 | INFR-07 | Phase 1 | Pending |
-| MEMO-01 | Phase 1 | Pending |
+| MEMO-01 | Phase 1 | Complete |
 | MEMO-02 | Phase 5 | Pending |
 | MEMO-03 | Phase 2 | Pending |
 | MEMO-04 | Phase 3 | Pending |
