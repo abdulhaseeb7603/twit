@@ -1,0 +1,85 @@
+# ~/.zeroclaw/config.toml
+# ZeroClaw Twitter Gig Hunter Agent
+
+# --- Provider (MiniMax direct, your token plan) ---
+api_key = "your-minimax-api-key"                    # encrypted at rest
+default_provider = "custom:https://api.minimax.io/anthropic"
+default_model = "MiniMax-M2.5"
+default_temperature = 0.7
+
+# IMPORTANT: MiniMax M2.5 requires the Anthropic-compatible endpoint
+# Do NOT use https://api.minimax.chat/v1 (OpenAI format) -- it causes
+# "invalid role: developer" errors with M2.5
+
+# --- Model routing (auto-pick model per task type) ---
+[[model_routes]]
+hint = "reasoning"
+provider = "custom:https://api.minimax.io/anthropic"
+model = "MiniMax-M2.5"
+
+[[model_routes]]
+hint = "fast"
+provider = "custom:https://api.minimax.io/anthropic"
+model = "MiniMax-M2.5-highspeed"
+
+# --- Reliability & failover ---
+[reliability]
+max_retries = 3
+retry_delay_ms = 1000
+# If MiniMax is down, fall over to OpenRouter
+fallback_provider = "openrouter"
+fallback_model = "minimax/MiniMax-M2.5"
+fallback_api_key = "sk-or-your-openrouter-key"     # optional backup
+
+# --- Memory ---
+[memory]
+backend = "sqlite"
+auto_save = true
+embedding_provider = "openai"                       # or "noop" to skip vectors
+vector_weight = 0.7
+keyword_weight = 0.3
+
+# --- Cost tracking (prevent runaway spending) ---
+[cost]
+enabled = true
+daily_limit_usd = 5.0
+monthly_limit_usd = 50.0
+warn_at_percent = 80
+
+# --- Security ---
+[autonomy]
+level = "supervised"                                # start supervised, switch to "full" later
+workspace_only = true
+shell_env_passthrough = [
+    "MINIMAX_API_KEY",
+    "TWITTER_USERNAME",
+    "TWITTER_EMAIL",
+    "TWITTER_PASSWORD",
+    "OPENAI_API_KEY"
+]
+allowed_commands = [
+    "python3", "pip", "git", "ls", "cat", "grep",
+    "curl", "echo", "mkdir", "cp", "rm"
+]
+forbidden_paths = [
+    "/etc", "/root", "/proc", "/sys",
+    "~/.ssh", "~/.gnupg", "~/.aws"
+]
+
+[secrets]
+encrypt = true                                      # ChaCha20-Poly1305 at rest
+
+# --- Gateway ---
+[gateway]
+port = 42617
+require_pairing = true
+allow_public_bind = false
+
+# --- Skills ---
+[skills]
+open_skills_enabled = false                         # we only use our custom skill
+prompt_injection_mode = "full"                      # M2.5 has 200K context, use full
+
+# --- Scheduler ---
+[scheduler]
+enabled = true
