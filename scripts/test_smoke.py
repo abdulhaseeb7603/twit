@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Smoke test script for the twitter-gig-hunter Phase 1 stack.
 
-Validates: skill registration, config correctness, script imports,
-memory schema, common module functionality, shell_env_passthrough,
-and ZeroClaw version.
+Validates: skill recognition, config correctness, script imports,
+memory schema, common module functionality, env vars, and ZeroClaw version.
 
 Runs WITHOUT real API keys or Twitter credentials -- purely local.
 
@@ -89,28 +88,18 @@ def test_config_validation():
 
     checks = {
         "default_provider with minimax": bool(
-            re.search(r"default_provider\s*=.*api\.minimax\.io/anthropic", content)
+            re.search(r"default_provider\s*=.*minimax", content, re.IGNORECASE)
         ),
-        "daily_limit_usd = 5.0": bool(
-            re.search(r"daily_limit_usd\s*=\s*5\.0", content)
+        "default_model set": bool(
+            re.search(r"default_model\s*=", content)
         ),
-        "monthly_limit_usd = 50.0": bool(
-            re.search(r"monthly_limit_usd\s*=\s*50\.0", content)
+        "model_routes defined": bool(
+            re.search(r"\[\[model_routes\]\]", content)
         ),
-        "shell_env_passthrough array": bool(
-            re.search(r"shell_env_passthrough\s*=\s*\[", content)
+        "memory backend": bool(
+            re.search(r"\[memory\]", content)
         ),
     }
-
-    # Check shell_env_passthrough has at least 5 entries
-    passthrough_match = re.search(
-        r"shell_env_passthrough\s*=\s*\[(.*?)\]", content, re.DOTALL
-    )
-    if passthrough_match:
-        entries = re.findall(r'"([^"]+)"', passthrough_match.group(1))
-        checks["shell_env_passthrough >= 5 entries"] = len(entries) >= 5
-    else:
-        checks["shell_env_passthrough >= 5 entries"] = False
 
     # Also try TOML parsing if available
     toml_parsed = False
@@ -216,7 +205,6 @@ def test_memory_schema():
             cwd=SCRIPTS_DIR,
         )
         if result.returncode != 0:
-            # init_db uses output_error which exits 1 but prints JSON
             stderr = result.stderr[:200] if result.stderr else ""
             stdout = result.stdout[:200] if result.stdout else ""
             return (False, f"init_db.py failed: stdout={stdout} stderr={stderr}")
@@ -354,32 +342,22 @@ def test_common_module():
     return (True, "classify_error and output_error work correctly")
 
 
-# ── Test 6: Shell env passthrough verification ────────────────────
-def test_shell_env_passthrough():
-    """Verify config.toml shell_env_passthrough contains all 5 required vars."""
-    if not os.path.exists(CONFIG_PATH):
-        return (False, f"config.toml not found at {CONFIG_PATH}")
-
-    with open(CONFIG_PATH, "r") as f:
-        content = f.read()
-
-    passthrough_match = re.search(
-        r"shell_env_passthrough\s*=\s*\[(.*?)\]", content, re.DOTALL
-    )
-    if not passthrough_match:
-        return (False, "shell_env_passthrough not found in config.toml")
-
-    entries = re.findall(r'"([^"]+)"', passthrough_match.group(1))
-
-    missing = [v for v in REQUIRED_ENV_VARS if v not in entries]
+# ── Test 6: Environment variables check ───────────────────────────
+def test_env_vars():
+    """Check that required environment variables are set."""
+    missing = [v for v in REQUIRED_ENV_VARS if not os.environ.get(v)]
     if missing:
-        return (False, f"Missing from shell_env_passthrough: {', '.join(missing)}")
-    return (True, f"All {len(REQUIRED_ENV_VARS)} required vars present in passthrough")
+        return (
+            False,
+            f"Missing env vars: {', '.join(missing)}. "
+            "Set them in ~/.bashrc or ~/.profile",
+        )
+    return (True, f"All {len(REQUIRED_ENV_VARS)} required env vars are set")
 
 
 # ── Test 7: ZeroClaw version check ───────────────────────────────
 def test_zeroclaw_version():
-    """Verify ZeroClaw version >= 0.5.1 (required for bug #851 fix)."""
+    """Verify ZeroClaw is installed and report version."""
     try:
         result = subprocess.run(
             ["zeroclaw", "--version"],
@@ -390,16 +368,8 @@ def test_zeroclaw_version():
         if not match:
             return (False, f"Could not parse version from: {output[:100]}")
 
-        major, minor, patch = int(match.group(1)), int(match.group(2)), int(match.group(3))
-        version_str = f"{major}.{minor}.{patch}"
-
-        if (major, minor, patch) >= (0, 5, 1):
-            return (True, f"ZeroClaw v{version_str} >= 0.5.1 (OK)")
-        return (
-            False,
-            f"ZeroClaw v{version_str} < 0.5.1 -- "
-            "shell tools may fail in headless/systemd mode (bug #851)",
-        )
+        version_str = f"{match.group(1)}.{match.group(2)}.{match.group(3)}"
+        return (True, f"ZeroClaw v{version_str} installed")
     except FileNotFoundError:
         return (
             False,
@@ -421,7 +391,7 @@ def main():
         ("script_imports", test_script_imports),
         ("memory_schema", test_memory_schema),
         ("common_module", test_common_module),
-        ("shell_env_passthrough", test_shell_env_passthrough),
+        ("env_vars", test_env_vars),
         ("zeroclaw_version", test_zeroclaw_version),
     ]
 

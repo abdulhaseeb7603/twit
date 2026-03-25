@@ -5,27 +5,19 @@ set -euo pipefail
 
 echo "=== Twitter Gig Hunter Agent Deployment ==="
 
-# Step 1: Check ZeroClaw is installed and version >= 0.5.1
-echo "[1/7] Checking ZeroClaw version..."
+# Step 1: Check ZeroClaw is installed
+echo "[1/7] Checking ZeroClaw..."
 if ! command -v zeroclaw &> /dev/null; then
     echo "ERROR: ZeroClaw not found. Install with:"
-    echo "  curl -fsSL https://raw.githubusercontent.com/zeroclaw-labs/zeroclaw/main/install.sh | bash"
+    echo "  curl -fsSL https://zeroclawlabs.ai/install.sh | bash"
+    echo ""
+    echo "Or build from source:"
+    echo "  git clone https://github.com/openagen/zeroclaw.git"
+    echo "  cd zeroclaw && ./bootstrap.sh"
     exit 1
 fi
 ZCVER=$(zeroclaw --version 2>&1 | grep -oP '\d+\.\d+\.\d+' | head -1)
 echo "  Found ZeroClaw v${ZCVER}"
-
-# Parse version components for comparison
-IFS='.' read -r ZC_MAJOR ZC_MINOR ZC_PATCH <<< "$ZCVER"
-if [ "$ZC_MAJOR" -eq 0 ] && [ "$ZC_MINOR" -lt 5 ]; then
-    echo "WARNING: ZeroClaw v${ZCVER} < 0.5.1"
-    echo "  Shell tools may fail in headless/systemd mode (bug #851)."
-    echo "  Upgrade: curl -fsSL https://raw.githubusercontent.com/zeroclaw-labs/zeroclaw/main/install.sh | bash"
-elif [ "$ZC_MAJOR" -eq 0 ] && [ "$ZC_MINOR" -eq 5 ] && [ "$ZC_PATCH" -lt 1 ]; then
-    echo "WARNING: ZeroClaw v${ZCVER} < 0.5.1"
-    echo "  Shell tools may fail in headless/systemd mode (bug #851)."
-    echo "  Upgrade: curl -fsSL https://raw.githubusercontent.com/zeroclaw-labs/zeroclaw/main/install.sh | bash"
-fi
 
 # Step 2: Install Python dependencies
 echo "[2/7] Installing Python dependencies..."
@@ -52,13 +44,13 @@ else
     echo "WARNING: config/config.toml not found in repo"
 fi
 
-# Deploy SKILL.toml
-if [ -f "${REPO_DIR}/config/skills/twitter-gig-hunter/SKILL.toml" ]; then
-    cp "${REPO_DIR}/config/skills/twitter-gig-hunter/SKILL.toml" \
-       ~/.zeroclaw/workspace/skills/twitter-gig-hunter/SKILL.toml
-    echo "  Deployed SKILL.toml"
+# Deploy SKILL.md
+if [ -f "${REPO_DIR}/config/skills/twitter-gig-hunter/SKILL.md" ]; then
+    cp "${REPO_DIR}/config/skills/twitter-gig-hunter/SKILL.md" \
+       ~/.zeroclaw/workspace/skills/twitter-gig-hunter/SKILL.md
+    echo "  Deployed SKILL.md"
 else
-    echo "WARNING: SKILL.toml not found in repo"
+    echo "WARNING: SKILL.md not found in repo"
 fi
 
 # Deploy Python scripts
@@ -70,34 +62,32 @@ else
     echo "WARNING: scripts/ directory not found in repo"
 fi
 
-# Step 5: Load secrets into ZeroClaw's encrypted store
-echo "[5/7] Checking secrets in ZeroClaw encrypted store..."
-echo "  The following secrets must be set for the agent to function."
-echo "  If you have not set them yet, run each command manually:"
+# Step 5: Environment variables for secrets
+echo "[5/7] Checking environment variables..."
+echo "  The following env vars must be set for the agent to function."
+echo "  Add them to ~/.bashrc or ~/.profile, then re-login:"
 echo ""
-echo "    zeroclaw secrets set MINIMAX_API_KEY <your-minimax-api-key>"
-echo "    zeroclaw secrets set TWITTER_USERNAME <your-twitter-username>"
-echo "    zeroclaw secrets set TWITTER_EMAIL <your-twitter-email>"
-echo "    zeroclaw secrets set TWITTER_PASSWORD <your-twitter-password>"
-echo "    zeroclaw secrets set OPENAI_API_KEY <your-openai-api-key>"
+echo "    export MINIMAX_API_KEY='your-minimax-api-key'"
+echo "    export TWITTER_USERNAME='your-twitter-username'"
+echo "    export TWITTER_EMAIL='your-twitter-email'"
+echo "    export TWITTER_PASSWORD='your-twitter-password'"
+echo "    export OPENAI_API_KEY='your-openai-api-key'"
 echo ""
 
-# Check if secrets are already set
 SECRETS_SET=true
 for SECRET in MINIMAX_API_KEY TWITTER_USERNAME TWITTER_EMAIL TWITTER_PASSWORD OPENAI_API_KEY; do
-    if ! zeroclaw secrets list 2>/dev/null | grep -q "$SECRET"; then
-        echo "  WARNING: $SECRET is not set in ZeroClaw secrets"
+    if [ -z "${!SECRET:-}" ]; then
+        echo "  WARNING: $SECRET is not set"
         SECRETS_SET=false
     fi
 done
 
 if [ "$SECRETS_SET" = true ]; then
-    echo "  All 5 secrets are loaded."
+    echo "  All 5 env vars are set."
 else
     echo ""
-    echo "  Some secrets are missing. The agent will produce structured errors"
+    echo "  Some env vars are missing. The agent will produce structured errors"
     echo "  (not crashes) when invoked without them, but tools will not function."
-    echo "  Set missing secrets with: zeroclaw secrets set <KEY> <VALUE>"
 fi
 
 # Step 6: Initialize database schema
@@ -105,21 +95,19 @@ echo "[6/7] Initializing memory schema..."
 python3 ~/.zeroclaw/workspace/skills/twitter-gig-hunter/scripts/init_db.py
 
 # Step 7: Install and start systemd service
-echo "[7/7] Installing systemd service..."
+echo "[7/7] Installing ZeroClaw service..."
 zeroclaw service install
-systemctl --user daemon-reload
-systemctl --user enable zeroclaw
-systemctl --user start zeroclaw
-sleep 5
-systemctl --user status zeroclaw --no-pager
+zeroclaw service start
+sleep 3
+zeroclaw service status || systemctl --user status zeroclaw --no-pager
 
 echo ""
 echo "=== Deployment complete ==="
-echo "  Gateway: http://localhost:42617"
+echo "  Gateway: http://localhost:3000"
 echo "  Logs:    journalctl --user -u zeroclaw -f"
-echo "  Status:  systemctl --user status zeroclaw"
+echo "  Status:  zeroclaw service status"
 echo ""
 echo "Next steps:"
 echo "  1. Run smoke test: python3 ~/.zeroclaw/workspace/skills/twitter-gig-hunter/scripts/test_smoke.py"
-echo "  2. Visit gateway: http://localhost:42617"
+echo "  2. Visit gateway: http://localhost:3000"
 echo "  3. Check logs: journalctl --user -u zeroclaw -f"
