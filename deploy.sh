@@ -103,11 +103,11 @@ zeroclaw service status || systemctl --user status zeroclaw --no-pager
 
 echo ""
 echo "=== Deployment complete ==="
-echo "  Gateway: http://localhost:3000"
+echo "  Gateway: http://localhost:42617"
 echo "  Logs:    journalctl --user -u zeroclaw -f"
 echo "  Status:  zeroclaw service status"
 echo ""
 echo "Next steps:"
 echo "  1. Run smoke test: python3 ~/.zeroclaw/workspace/skills/twitter-gig-hunter/scripts/test_smoke.py"
-echo "  2. Visit gateway: http://localhost:3000"
+echo "  2. Visit gateway: http://localhost:42617"
 echo "  3. Check logs: journalctl --user -u zeroclaw -f"
